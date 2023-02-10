@@ -1,0 +1,73 @@
+server:
+  port: 3333
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/kotlin
+    username: postgres #@db.user@
+    password: root #@db.pass@
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      max-lifetime: 2000000
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      minimum-idle: 1
+      schema: bot
+  jpa:
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQL10Dialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
+
+rss:
+  dislikes:
+    threshold: 1 #порог срабатывания при минусовании (для ускорения примера - 1)
+  habrUrl:
+    JAVA: "https://habr.com/ru/rss/hub/java/all/?fl=ru&limit=100"
+    KOTLIN: "https://habr.com/ru/rss/hub/kotlin/all/?fl=ru&limit=100"
+    NEWS: "https://habr.com/ru/rss/all/all/?fl=ru&limit=100"
+
+  javaSubtopics:
+    CORE: [ exception, throwable, runtime, reflection, исключен, рефлекси, jvm, jre, jdk, heap, gc, jmm, мусор, garbage, eden,
+            bytecode, сериализац, десериализац, equals, hashCode, toString, NPE, catch, finally, classloader, generic, обобщен ]
+    OOP: [ наследовани, solid, полиморфизм, абстракц, абстрактн, интерфейс, класс, ооп, oop, инкапсуляц, объект,
+          interface, abstract, class, object ]
+    COLLECTIONS: [ list, map, set, queue, deque, arraylist, hashset, hashmap, treeset, sortedset, treemap, linkedlist,
+                  arraydeque, collection, iterable, коллекц ]
+    MULTITHREADING: [ multithreading, многопоточн, поток, thread, runnable, callable, synchronized, синхронизац,
+                      параллельн, latch, lock, deadlock, race, pool, executorservice, асинхр, threadlocal, outofmemory,
+                      stackoverflow, concurrency, forkjoin, wait, notify, future, completable, volatile ]
+    IO: [ io, nio, try-with-resources, inputstream, outputstream, file, reader, writer, serializable ]
+    JAVA8: [ lambda, лямбд, stream api, functionalinterface, терминальн, конвейерн, localdate, localdatetime, zoneddatetime,
+            offcetdatetime, joda, optional, datetime api, java 8 ]
+    SPRING: [ spring, spring boot, starter, autowired, service, controller, repository, jpa, hibernate,
+            freemarker, mvc, dao, dto, persist, entity, web, jdbc, bean, бин, сервлет, tomcat, dispatcher ]
+  kotlinSubtopics:
+    CORE: [fun, data class, val, multiplatform, any, null-safety, null безопасн, exception, kotlin sdk, throwable,
+            catch, finally, classloader, jit, generic, обобщен, сериализац, десериализац, equals, hashCode, toString]
+    OOP: [наследовани, solid, полиморфизм, абстракц, абстрактн, интерфейс, класс, ооп, oop, инкапсуляц, объект,
+          interface, abstract, class, object ]
+    COLLECTIONS: [list, map, set, queue, deque, arraylist, hashset, hashmap, treeset, sortedset, treemap, arraydeque,
+                  collection, iterable, коллекц ]
+    MULTITHREADING: [ multithreading, многопоточн, поток, thread, параллельн, deadlock, race, асинхр, outofmemory,
+                      stackoverflow, concurrency, корутин, coroutine, mutex, channel, launch, suspend, runBlocking ]
+    IO: [io, nio, use, inputstream, outputstream, file, reader, writer, serializable]
+    SPRING: [ spring, spring boot, starter, autowired, service, controller, repository, jpa, hibernate,
+              freemarker, mvc, dao, dto, persist, entity, web, jdbc, bean, бин, сервлет, tomcat, dispatcher ]
+  newsSubtopics:
+    AI: [ chatgpt, openai, dalle, нейросет, machine learning, data science, ml, ai, ии, нейрон, nlp, gan, обучен,
+          python, робот, распознаван, pytorch, jupiter ]
+    BACKEND: [ back, backend, бэкенд, java, go, golang, spring, php, laravel, symphony, сервер, kotlin, c++, c#,
+              микросервис, архитектур, kafka, брокер, ddd, tdd, node.js, intellij, jdk ]
+    FRONTEND: [ js, frontend, ui, ux, веб, front, браузер, верстк, babel, html, css, javascript, jquery, vue, react,
+                redux, mobx, emmet, vscode, angular, клиент ]
+    QA: [ qa, тестир, selenium, автотест, ручно, selenid, postman, devtools, тест, test, уязвимост, баг, багуля, bug ]
+    DEVOPS: [ devops, девопс, psa, инфра, инфраструктур, jenkins, ansible, terraform, kuber, kubernetes, docker, nginx,
+              deployment, configmap, pod, openshift, bare metal, linux, сервер, vim, bash, облачн, pipeline, pipe, ci, cd ]
+    MOBILE: [ ios, android, swift, kotlin, android sdk ]
+    HARDWARE: [ железо, hardware, процессор, память, материнск, плата, озу, ram, cpu, gpu, xeon, amd, nvidia, intel, arm ]
+    RELOCATION: [ релокейт, переезд, переезж, перелет, relocation, relocate, valley, США, Европа, Канада, Австралия,
+                  Сербия, Армения, Грузия, Казахстан, Монголия, мобилизац, аккредитован, аккредитаци ]
+
+
