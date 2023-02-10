@@ -64,8 +64,8 @@ rss:
     QA: [ qa, тестир, selenium, автотест, ручно, selenid, postman, devtools, тест, test, уязвимост, баг, багуля, bug ]
     DEVOPS: [ devops, девопс, psa, инфра, инфраструктур, jenkins, ansible, terraform, kuber, kubernetes, docker, nginx,
               deployment, configmap, pod, openshift, bare metal, linux, сервер, vim, bash, облачн, pipeline, pipe, ci, cd ]
-    MOBILE: [ ios, android, swift, kotlin, android sdk, мобильно, моби ]
+    MOBILE: [ ios, android, swift, kotlin, android sdk, мобильно, моби, flutter ]
     HARDWARE: [ железо, hardware, процессор, память, материнск, плата, озу, ram, cpu, gpu, xeon, amd, nvidia, intel, arm ]
     RELOCATION: [ релокейт, переезд, переезж, перелет, relocation, relocate, valley, США, Европа, Канада, Австралия,
                   Сербия, Армения, Грузия, Казахстан, Монголия, мобилизац, аккредитован, аккредитаци ]
-
+    HR: [карьер, hr, кадров, собес, онбординг, ваканс, зарплат, доход, собеседов, рекрут, hh]

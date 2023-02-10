@@ -8,7 +8,6 @@ import java.io.IOException
 @Component
 class JsoupHtmlParser {
 
-    // todo из пропертей
     var userAgent = "Chrome/4.0.249.0 Safari/532.5"
     var referrer = "http://www.google.com"
 

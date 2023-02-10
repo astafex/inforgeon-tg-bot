@@ -34,4 +34,6 @@ internal class RssParsingTest {
         categorizerImpl.rssCategorize(RssTopicName.NEWS )
         println("OK")
     }
+
+    //TODO тесты
 }
