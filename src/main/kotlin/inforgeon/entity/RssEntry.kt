@@ -1,6 +1,6 @@
 package inforgeon.entity
 
-import inforgeon.inforgeon.constant.RssNewsSubtopicName
+import inforgeon.inforgeon.constant.RssSuptopicName
 import inforgeon.inforgeon.constant.RssTopicName
 import javax.persistence.*
 
@@ -28,10 +28,10 @@ class RssEntry (
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "subtopic", nullable = false, length = 20)
-    var subtopic: RssNewsSubtopicName? = null,
+    var subtopic: RssSuptopicName? = null,
 
     @ElementCollection
     @CollectionTable(name = "tags", joinColumns = [JoinColumn(name = "entry_id")])
-    @Column(name = "tag")
-    var tags: List<String>? = listOf()
+    @Column(name = "tag", length = 100)
+    var tags: List<String> = ArrayList()
 )

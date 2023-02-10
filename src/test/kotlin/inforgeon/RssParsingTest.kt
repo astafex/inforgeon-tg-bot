@@ -1,5 +1,6 @@
 package inforgeon
 
+import inforgeon.inforgeon.constant.RssTopicName
 import inforgeon.inforgeon.rss.impl.CategorizerIml
 import inforgeon.inforgeon.rss.impl.HabrRssParser
 import org.junit.jupiter.api.Test
@@ -21,7 +22,7 @@ internal class RssParsingTest {
     fun rssTest() {
         val rssParser = HabrRssParser()
         val rssEntries =
-            rssParser.parseRssContent(rssParser.getFeed("https://habr.com/ru/rss/all/all/?fl=ru&limit=100"))
+            rssParser.parseRssContent(rssParser.getFeed("https://habr.com/ru/rss/all/all/?fl=ru&limit=100"), RssTopicName.NEWS)
 
         val size = rssEntries.size
 
@@ -30,7 +31,7 @@ internal class RssParsingTest {
 
     @Test
     fun categorizerTest() {
-        categorizerIml.rssCategorize("https://habr.com/ru/rss/all/all/?fl=ru")
-
+        categorizerIml.rssCategorize(RssTopicName.NEWS )
+        println("OK")
     }
 }
