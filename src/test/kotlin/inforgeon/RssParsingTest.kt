@@ -1,7 +1,7 @@
 package inforgeon
 
 import inforgeon.inforgeon.constant.RssTopicName
-import inforgeon.inforgeon.rss.impl.CategorizerIml
+import inforgeon.inforgeon.rss.impl.CategorizerImpl
 import inforgeon.inforgeon.rss.impl.HabrRssParser
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles
 internal class RssParsingTest {
 
     @Autowired
-    private lateinit var categorizerIml: CategorizerIml
+    private lateinit var categorizerImpl: CategorizerImpl
 
     @Test
     fun rssTest() {
@@ -31,7 +31,7 @@ internal class RssParsingTest {
 
     @Test
     fun categorizerTest() {
-        categorizerIml.rssCategorize(RssTopicName.NEWS )
+        categorizerImpl.rssCategorize(RssTopicName.NEWS )
         println("OK")
     }
 }

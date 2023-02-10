@@ -29,6 +29,6 @@ class JsoupHtmlParser {
                 element.text()
             )
         }
-        return parsedText.toString()
+        return parsedText.toString().lowercase().trim()
     }
 }

@@ -1,9 +1,12 @@
 package inforgeon.entity
 
-import inforgeon.inforgeon.constant.RssSuptopicName
+import inforgeon.inforgeon.constant.RssSubtopicName
 import inforgeon.inforgeon.constant.RssTopicName
 import javax.persistence.*
 
+/**
+ * Сущность - RSS источник из ленты
+ */
 @Entity
 @Table(schema = "bot", name = "rss_entry")
 class RssEntry (
@@ -28,10 +31,21 @@ class RssEntry (
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "subtopic", nullable = false, length = 20)
-    var subtopic: RssSuptopicName? = null,
+    var subtopic: RssSubtopicName? = null,
 
     @ElementCollection
     @CollectionTable(name = "tags", joinColumns = [JoinColumn(name = "entry_id")])
     @Column(name = "tag", length = 100)
     var tags: List<String> = ArrayList()
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is RssEntry) return false
+        if (id != other.id) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return 31 * id.hashCode()
+    }
+}

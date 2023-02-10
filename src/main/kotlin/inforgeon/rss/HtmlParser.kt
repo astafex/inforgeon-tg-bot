@@ -1,6 +1,5 @@
 package inforgeon.inforgeon.rss
 
-import java.io.IOException
 
 /**
  * Класс-парсер текста из веб-страниц
@@ -8,10 +7,7 @@ import java.io.IOException
 interface HtmlParser {
 
     /**
-     * Метод скачивает посредством http(s) запроса html-код страницы и парсит body
-     * @param url - адрес веб-страницы
-     * @return parsedText - текст, извлеченный из body html-страницы
-     * @throws IOException
+     * Парсинг body html страницы
      */
     fun parseHtml(url: String): String
 }

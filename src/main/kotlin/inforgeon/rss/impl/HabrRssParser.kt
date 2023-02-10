@@ -44,11 +44,6 @@ class HabrRssParser : RssParser {
             println("Author ${syndEntry.author}")
             println("Url ${syndEntry.uri}")
             println("Description ${syndEntry.description.value}")
-//            syndEntry.description.value.subSequence(syndEntry.description.value.indexOf("<p>") + 3, syndEntry.description.value.indexOf("</p>"))
-//            syndEntry.contents.forEach { content ->
-//                var syndContent = content as SyndContent
-//                println("Content ${syndContent.value}")
-//            }
             println()
         }
     }
