@@ -15,7 +15,7 @@ class UserSettings (
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "username")
-    var dislikedTags: List<DislikedTagCounter> = ArrayList()
+    var dislikedTags: List<DislikedTagCounter> = mutableListOf()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

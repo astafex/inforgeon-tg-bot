@@ -33,7 +33,7 @@ class RssEntry (
     @Column(name = "subtopic", nullable = false, length = 20)
     var subtopic: RssSubtopicName? = null,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "tags", joinColumns = [JoinColumn(name = "entry_id")])
     @Column(name = "tag", length = 100)
     var tags: List<String> = ArrayList()

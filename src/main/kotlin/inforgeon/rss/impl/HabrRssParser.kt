@@ -23,7 +23,7 @@ class HabrRssParser : RssParser {
         return feed.entries.map { e ->
             val entry = e as SyndEntry
             // определим id статьи на хабре. Этот же id и станет нашим id
-            val id = getIdFromHabrUrl(entry.uri) ?: throw java.lang.IllegalArgumentException("Id в url не найден!")
+            val id = getIdFromHabrUrl(entry.uri, topicName) ?: throw java.lang.IllegalArgumentException("Id в url не найден!")
             RssEntry(
                 id = id,
                 title = entry.title,

@@ -12,7 +12,7 @@ class DislikedTagCounter (
 
     @Id
     @GeneratedValue
-    var id: Long,
+    var id: Long? = null,
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "topic", nullable = false, length = 20)

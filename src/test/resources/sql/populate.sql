@@ -1,0 +1,70 @@
+truncate bot.disliked cascade;
+truncate bot.rss_entry cascade;
+truncate bot.tags cascade;
+truncate bot.user_settings cascade;
+
+insert into bot.rss_entry (id, author, description, subtopic, title, topic, url)
+values
+    (3716270, 'YuvaHH', '<p>Майкл Бьюрри, вновь предсказывает падение фондового рынка', 'HR',
+        'Майкл Бьюрри — «Продавайте».', 'NEWS', 'https://habr.com/ru/post/716270/'),
+    (3716268, 'Rembo123', '<p>Что чаще всего нужно программисту от форматирования?', 'DEVOPS',
+     'Про Vim &#34; Форматирование', 'NEWS', 'https://habr.com/ru/post/716268/'),
+    (3716262, 'knelse', '<p>Привет, Хабр!</p><p>Посмотрим, что у нас там в мешочке, ру-ру', 'HARDWARE',
+        'Мало картинок, много лута: эмулятор Сферы, часть 4', 'NEWS', 'https://habr.com/ru/post/716262/'),
+    (2715206, 'miwas07', '<p>Всем привет! Меня зовут Миша Вассер, я Head of Android в AGIMA.', 'ANDROID',
+        'Как адаптировать Android-приложение под Huawei', 'KOTLIN', 'https://habr.com/ru/post/715206/'),
+    (2714050, 'comdivuz', '<p>Так уж получилось, что у нас в компании используются разные стеки и языки.', 'OOP',
+        '[recovery mode] Kotlin/Golang работа в двух языках', 'KOTLIN', 'https://habr.com/ru/post/714050/'),
+    (2713518, 'cdrChknkv', '<p>Здравствуй, дорогой читатель. Каждый Android-разработчик сталкивался', 'SPRING',
+        'Библиотека «Room» для начинающего Android-разработчика', 'KOTLIN', 'https://habr.com/ru/post/713518/'),
+    (1716232, 'MGalaktionov', '<p><strong>Цикл постов про Keycloak (часть 1): Внедрение.', 'SPRING',
+        'Цикл постов про Keycloak. Часть первая: Внедрение', 'JAVA', 'https://habr.com/ru/post/716232/'),
+    (1715824, 'Sergey1124', '<p>Когда пишешь код в IntelliJ IDEA, привыкаешь что везде есть подсказки,' , 'OOP',
+        'Графический интерфейс для bash, делаем работу в командной строке удобнее', 'JAVA', 'https://habr.com/ru/post/715824/'),
+    (1715622, 'igor_suhorukov', '<p>Продолжу расскаp', 'COLLECTIONS', '«Разделяй и властвуй» для OpenStreetMap мира в PostgreSQL',
+        'JAVA', 'https://habr.com/ru/post/715622/');
+
+insert into bot.tags (entry_id, tag)
+values
+    (3716270, 'hh'),
+    (3716268, 'сервер'),
+    (3716268, 'vim'),
+    (3716262, 'arm'),
+    (3716262, 'ram'),
+    (2715206, 'google play'),
+    (2715206, 'мобил'),
+    (2715206, 'sdk'),
+    (2715206, 'android'),
+    (2715206, 'apps'),
+    (2714050, 'класс'),
+    (2714050, 'объект'),
+    (2714050, 'полиморфизм'),
+    (2714050, 'interface'),
+    (2714050, 'class'),
+    (2714050, 'интерфейс'),
+    (2714050, 'ооп'),
+    (2714050, 'object'),
+    (2713518, 'dao'),
+    (2713518, 'repository'),
+    (2713518, 'dispatcher'),
+    (2713518, 'entity'),
+    (1716232, 'spring'),
+    (1716232, 'controller'),
+    (1716232, 'авторизац'),
+    (1716232, 'security'),
+    (1716232, 'starter'),
+    (1716232, 'web'),
+    (1716232, 'service'),
+    (1716232, 'бин'),
+    (1716232, 'jdbc'),
+    (1716232, 'entity'),
+    (1716232, 'bean'),
+    (1715824, 'интерфейс'),
+    (1715622, 'set'),
+    (1715622, 'treemap'),
+    (1715622, 'arraylist'),
+    (1715622, 'collection'),
+    (1715622, 'list'),
+    (1715622, 'map'),
+    (1715622, 'treeset');
+

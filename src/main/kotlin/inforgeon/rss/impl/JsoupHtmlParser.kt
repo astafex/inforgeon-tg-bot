@@ -1,18 +1,19 @@
 package inforgeon.inforgeon.rss.impl
 
+import inforgeon.inforgeon.rss.HtmlParser
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.springframework.stereotype.Component
 import java.io.IOException
 
 @Component
-class JsoupHtmlParser {
+class JsoupHtmlParser : HtmlParser {
 
     var userAgent = "Chrome/4.0.249.0 Safari/532.5"
     var referrer = "http://www.google.com"
 
     @Throws(IOException::class)
-    fun parseHtml(url: String): String {
+    override fun parseHtml(url: String): String {
         //получить содержимое веб-страницы по адресу url
         val doc = Jsoup.connect(url)
             .userAgent(userAgent)
