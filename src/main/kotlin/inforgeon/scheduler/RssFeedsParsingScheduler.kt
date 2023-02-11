@@ -12,7 +12,7 @@ class RssFeedsParsingScheduler(private val categorizer: Categorizer) {
 
     private val logger = KotlinLogging.logger {}
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.MINUTES) // todo delay 4 minutes
+    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES) // delay 1 minute для тестов, для прома хватит и 5 мин
 //    @Scheduled(cron = "0 * * * * *")
     fun parsingAndCategorizedAllFeeds() {
         logger.info { "Начат парсинг и категоризация ленты..." }
