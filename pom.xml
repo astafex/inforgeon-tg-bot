@@ -11,7 +11,7 @@
     <groupId>inforgeon</groupId>
     <artifactId>inforgeon-tg-bot</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>inforgeon-tg.bot</name>
+    <name>inforgeon-tg-bot</name>
     <description>Kotlin school. Inforgeon Telegram Bot - Ваш личный "хирург" в потоке информации. Вырежет все ненужное</description>
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
