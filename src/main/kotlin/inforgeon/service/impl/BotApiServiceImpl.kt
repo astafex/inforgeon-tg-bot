@@ -28,14 +28,14 @@ class BotApiServiceImpl(
     @Transactional(readOnly = true)
     override fun getNewestRssEntry(username: String, topicName: RssTopicName) : RssEntry {
         val settings = userSettingsService.get(username)
-        val stopTags = getAllStopTags(settings, topicName)
+        val stopTags = getAllStopTags(settings!!, topicName)
         return rssEntryService.getNewest(topicName, stopTags)
     }
 
     @Transactional(readOnly = true)
     override fun getNextRssEntry(username: String, topicName: RssTopicName, rssEntryId: Long) : RssEntry{
         val settings = userSettingsService.get(username)
-        val stopTags = getAllStopTags(settings, topicName)
+        val stopTags = getAllStopTags(settings!!, topicName)
         return rssEntryService.getNext(topicName, rssEntryId, stopTags)
     }
 
@@ -44,7 +44,7 @@ class BotApiServiceImpl(
         var settings = userSettingsService.get(username)
         val rssEntry = rssEntryService.get(rssEntryId)
         // выделить все дизлайкнутые пользователем тэги
-        val allDislikedTags = getAllUserDislikedTags(settings, topicName)
+        val allDislikedTags = getAllUserDislikedTags(settings!!, topicName)
 
         // заминусить каждый тэг
         rssEntry.tags.forEach { entryTag ->
@@ -64,7 +64,7 @@ class BotApiServiceImpl(
     override fun filterTag(username: String, topicName: RssTopicName, filteredTag: String) {
         val settings = userSettingsService.get(username)
         // выделить все дизлайкнутые пользователем тэги
-        val allDislikedTags = getAllUserDislikedTags(settings, topicName)
+        val allDislikedTags = getAllUserDislikedTags(settings!!, topicName)
 
         // если тэг уже есть, то повысить его до стопа
         if (allDislikedTags.contains(filteredTag)) {
@@ -80,7 +80,7 @@ class BotApiServiceImpl(
     @Transactional
     override fun resetAllDislikes(username: String, topicName: RssTopicName) {
         val settings = userSettingsService.get(username)
-        settings.dislikedTags
+        settings!!.dislikedTags
             .filter { dislikesCounter -> dislikesCounter.topic == topicName }
             .forEach { it.count = 0 }
     }

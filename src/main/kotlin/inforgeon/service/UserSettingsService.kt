@@ -7,7 +7,7 @@ import inforgeon.inforgeon.entity.UserSettings
  */
 interface UserSettingsService {
 
-    fun get(username : String) : UserSettings
+    fun get(username : String) : UserSettings?
 
     fun initializeUser(username : String) : UserSettings
 
