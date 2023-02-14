@@ -12,8 +12,8 @@ class UserSettingsServiceImpl(private val repository: UserSettingsRepository)
 {
     @Transactional(readOnly = true)
     @Throws(NoSuchElementException::class)
-    override fun get(username: String): UserSettings {
-        return repository.findById(username).orElseThrow()
+    override fun get(username: String): UserSettings? {
+        return repository.findById(username).orElse(null)
     }
 
     @Transactional
