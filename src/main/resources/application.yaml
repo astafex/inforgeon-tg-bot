@@ -1,3 +1,7 @@
+inforgeon-bot:
+  token: 6244400944:AAFKBxMZEImkHAKy4SjsrBVWtLiPg21C_zE
+  name: inforgeon_bot
+
 server:
   port: 3333
 
@@ -23,7 +27,6 @@ rss:
   scheduler:
     enabled: true
     cron: "0 * * * * *"  # per 1 minutes - for testing
-#    cron: "0 0/15 * * * *"
   dislikes:
     threshold: 1 #порог срабатывания при минусовании (для ускорения примера - 1)
   habrUrl:
@@ -32,7 +35,8 @@ rss:
     NEWS: "https://habr.com/ru/rss/all/all/?fl=ru&limit=100"
   subtopics:
     JAVA:
-      CORE: [ runtime, reflection, исключен, рефлекси, jvm, jre, jdk, heap, gc, jmm, мусор, garbage, eden,
+      CORE:
+        [ runtime, reflection, исключен, рефлекси, jvm, jre, jdk, heap, gc, jmm, мусор, garbage, eden,
               bytecode, сериализац, десериализац, classloader, generic, обобщен ]
       OOP: [ наследовани, solid, полиморфизм, абстракц, абстрактн, интерфейс, класс, ооп, oop, инкапсуляц, объект,
              interface, abstract, class, object ]
