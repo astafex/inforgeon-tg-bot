@@ -21,27 +21,27 @@ class BotApiServiceImpl(
     val threshold: Int? = null
 
     @Transactional
-    override fun userRegistration(username: String) : UserSettings {
-        return userSettingsService.initializeUser(username)
+    override fun userRegistration(userId : Long) : UserSettings {
+        return userSettingsService.get(userId) ?: userSettingsService.initializeUser(userId)
     }
 
     @Transactional(readOnly = true)
-    override fun getNewestRssEntry(username: String, topicName: RssTopicName) : RssEntry {
-        val settings = userSettingsService.get(username)
+    override fun getNewestRssEntry(userId : Long, topicName: RssTopicName) : RssEntry {
+        val settings = userSettingsService.get(userId)
         val stopTags = getAllStopTags(settings!!, topicName)
         return rssEntryService.getNewest(topicName, stopTags)
     }
 
     @Transactional(readOnly = true)
-    override fun getNextRssEntry(username: String, topicName: RssTopicName, rssEntryId: Long) : RssEntry{
-        val settings = userSettingsService.get(username)
+    override fun getNextRssEntry(userId : Long, topicName: RssTopicName, rssEntryId: Long) : RssEntry{
+        val settings = userSettingsService.get(userId)
         val stopTags = getAllStopTags(settings!!, topicName)
         return rssEntryService.getNext(topicName, rssEntryId, stopTags)
     }
 
     @Transactional
-    override fun dislikeRssEntry(username: String, topicName: RssTopicName, rssEntryId: Long) {
-        var settings = userSettingsService.get(username)
+    override fun dislikeRssEntry(userId : Long, topicName: RssTopicName, rssEntryId: Long) {
+        var settings = userSettingsService.get(userId)
         val rssEntry = rssEntryService.get(rssEntryId)
         // выделить все дизлайкнутые пользователем тэги
         val allDislikedTags = getAllUserDislikedTags(settings!!, topicName)
@@ -61,8 +61,8 @@ class BotApiServiceImpl(
     }
 
     @Transactional
-    override fun filterTag(username: String, topicName: RssTopicName, filteredTag: String) {
-        val settings = userSettingsService.get(username)
+    override fun filterTag(userId : Long, topicName: RssTopicName, filteredTag: String) {
+        val settings = userSettingsService.get(userId)
         // выделить все дизлайкнутые пользователем тэги
         val allDislikedTags = getAllUserDislikedTags(settings!!, topicName)
 
@@ -78,8 +78,8 @@ class BotApiServiceImpl(
     }
 
     @Transactional
-    override fun resetAllDislikes(username: String, topicName: RssTopicName) {
-        val settings = userSettingsService.get(username)
+    override fun resetAllDislikes(userId : Long, topicName: RssTopicName) {
+        val settings = userSettingsService.get(userId)
         settings!!.dislikedTags
             .filter { dislikesCounter -> dislikesCounter.topic == topicName }
             .forEach { it.count = 0 }
