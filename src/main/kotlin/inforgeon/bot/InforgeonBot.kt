@@ -37,7 +37,7 @@ class InforgeonBot(
     override fun onUpdateReceived(update: Update) {
         update.apply {
             if (hasMessage()) {
-                val user = botApiService.userRegistration(message.from.id)
+                val user = botApiService.getUserSettings(message.from.id)
 
 
 

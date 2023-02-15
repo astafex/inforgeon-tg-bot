@@ -21,7 +21,7 @@ class BotApiServiceImpl(
     val threshold: Int? = null
 
     @Transactional
-    override fun userRegistration(userId : Long) : UserSettings {
+    override fun getUserSettings(userId : Long) : UserSettings {
         return userSettingsService.get(userId) ?: userSettingsService.initializeUser(userId)
     }
 

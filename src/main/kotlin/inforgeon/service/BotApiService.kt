@@ -12,7 +12,7 @@ interface BotApiService {
     /**
      * Зарегистрировать пользователя
      */
-    fun userRegistration(userId: Long) : UserSettings
+    fun getUserSettings(userId: Long) : UserSettings
 
     /**
      * Получить самую новую новость по выбранной теме
