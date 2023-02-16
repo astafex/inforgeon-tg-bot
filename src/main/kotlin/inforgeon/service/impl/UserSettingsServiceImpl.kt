@@ -7,18 +7,16 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class UserSettingsServiceImpl(private val repository: UserSettingsRepository)
-    : UserSettingsService
-{
+class UserSettingsServiceImpl(private val repository: UserSettingsRepository) : UserSettingsService {
     @Transactional(readOnly = true)
     @Throws(NoSuchElementException::class)
-    override fun get(username: String): UserSettings? {
-        return repository.findById(username).orElse(null)
+    override fun get(userId: Long): UserSettings? {
+        return repository.findById(userId).orElse(null)
     }
 
     @Transactional
-    override fun initializeUser(username: String): UserSettings {
-        return repository.save(UserSettings(username = username))
+    override fun initializeUser(userId: Long): UserSettings {
+        return repository.save(UserSettings(id = userId))
     }
 
     @Transactional
