@@ -30,24 +30,24 @@ class RssEntryServiceImpl(private val repository: RssEntryRepository) : RssEntry
     @Transactional(readOnly = true)
     @Throws(NoSuchElementException::class)
     override fun getNewest(topic: RssTopicName, stopTags: Collection<String>?): RssEntry {
-        if (stopTags == null || stopTags.isEmpty()) {
-            return repository.findFirstByTopicOrderByIdDesc(topic).orElseThrow()
+        return if (stopTags == null || stopTags.isEmpty()) {
+            repository.findFirstByTopicOrderByIdDesc(topic).orElseThrow()
         } else {
-//            repository.findFirstWithoutDisliked(topic, ArrayList(stopTags)).orElseThrow()
+    //            repository.findFirstWithoutDisliked(topic, ArrayList(stopTags)).orElseThrow()
             val filteredIds = repository.findAllByTagsIn(stopTags.toList()).map {it.id}.distinct()
-            return repository.findFirstByTopicAndIdNotInOrderByIdDesc(topic, filteredIds).orElseThrow()
+            repository.findFirstByTopicAndIdNotInOrderByIdDesc(topic, filteredIds).orElseThrow()
         }
     }
 
     @Transactional(readOnly = true)
     @Throws(NoSuchElementException::class)
     override fun getNext(topic: RssTopicName, rssEntryId: Long, stopTags: Collection<String>?): RssEntry {
-        if (stopTags == null || stopTags.isEmpty()) {
-            return repository.findFirstByTopicAndIdLessThanOrderByIdDesc(topic, rssEntryId).orElseThrow()
+        return if (stopTags == null || stopTags.isEmpty()) {
+            repository.findFirstByTopicAndIdLessThanOrderByIdDesc(topic, rssEntryId).orElseThrow()
         } else {
-//            repository.findNextWithoutDisliked(topic, rssEntryId, stopTags.toList()).orElseThrow()
+    //            repository.findNextWithoutDisliked(topic, rssEntryId, stopTags.toList()).orElseThrow()
             val filteredIds = repository.findAllByTagsIn(stopTags.toList()).map {it.id}.distinct()
-            return repository
+            repository
                 .findFirstByTopicAndIdNotInAndIdLessThanOrderByIdDesc(topic, filteredIds, rssEntryId)
                 .orElseThrow()
         }
