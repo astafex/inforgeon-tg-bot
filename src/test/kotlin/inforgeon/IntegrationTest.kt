@@ -7,6 +7,7 @@ import inforgeon.inforgeon.rss.impl.HabrRssParser
 import inforgeon.inforgeon.rss.impl.JsoupHtmlParser
 import inforgeon.inforgeon.service.BotApiService
 import inforgeon.inforgeon.service.UserSettingsService
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -22,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional
 @SpringBootTest(classes = [ App::class ])
 @ActiveProfiles("test")
 @Import(IntegrationTest.TestConfig::class)
-@Sql("classpath:/sql/truncate.sql")
 class IntegrationTest {
 
     @Configuration
@@ -77,13 +77,17 @@ class IntegrationTest {
 
     @Test
     @Transactional
+    @Sql("classpath:/sql/truncate.sql")
     fun test() {
         restHabrRssParser.feed[urlJava] = getSyndFeed(mutableListOf(getSyndEntry(title = "title1", url = "habr.com/ru/post/1/sdfsdf")))
         testJsoupHtmlParser.urlBody["habr.com/ru/post/1/sdfsdf"] = "offcetdatetimejodaoptional"
         categorizer.rssCategorize(JAVA)
-        userSettingsService.initializeUser("user")
-        var entry = botApiService.getNewestRssEntry("user", JAVA)
-        println(rssEntryToString(entry))
+        userSettingsService.initializeUser(1)
+        val entry = botApiService.getNewestRssEntry(1, JAVA)
+        entry.tags.forEach {
+            Assertions.assertTrue("offcetdatetimejodaoptional".contains(it))
+        }
+
     }
 
 }

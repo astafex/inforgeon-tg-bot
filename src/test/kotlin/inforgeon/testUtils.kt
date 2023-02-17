@@ -26,8 +26,3 @@ fun getSyndFeed(entries: MutableList<SyndEntry>) = mockk<SyndFeed>().also { sf -
     every { sf.description } returns "description"
 }
 
-fun rssEntryToString(rssEntry: RssEntry): String {
-    return "RssEntry(id=${rssEntry.id}, title='${rssEntry.title}', " +
-            "author=${rssEntry.author}, url='${rssEntry.url}', description=${rssEntry.description}, " +
-            "topic=${rssEntry.topic}, subtopic=${rssEntry.subtopic}, tags=${rssEntry.tags})"
-}
