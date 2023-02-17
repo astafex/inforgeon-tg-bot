@@ -3,7 +3,9 @@ package inforgeon.inforgeon.rss.impl
 import inforgeon.inforgeon.constant.RssSubtopicName
 import inforgeon.inforgeon.constant.RssTopicName
 import inforgeon.inforgeon.rss.Categorizer
+import inforgeon.inforgeon.rss.HtmlParser
 import inforgeon.inforgeon.service.RssEntryService
+import inforgeon.rss.RssParser
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
@@ -11,8 +13,8 @@ import org.springframework.stereotype.Component
 @Component
 @ConfigurationProperties("rss")
 class CategorizerImpl (
-    private val htmlParser: JsoupHtmlParser,
-    private val rssParser: HabrRssParser,
+    private val htmlParser: HtmlParser,
+    private val rssParser: RssParser,
     private val rssEntryService: RssEntryService
     ) : Categorizer
 {
@@ -43,7 +45,7 @@ class CategorizerImpl (
                 }
             }
             val calcSubtopic = tagCounter
-                .map { Pair(it.value, it.key) }
+                .map {  Pair(it.value, it.key) }
                 .maxByOrNull { it.first.values.sum() }!!
             entry.subtopic = calcSubtopic.second
             entry.tags = calcSubtopic.first.keys.toList()
