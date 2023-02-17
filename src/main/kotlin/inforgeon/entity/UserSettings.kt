@@ -1,5 +1,6 @@
 package inforgeon.inforgeon.entity
 
+import inforgeon.entity.RssEntry
 import javax.persistence.*
 
 /**
@@ -10,6 +11,10 @@ import javax.persistence.*
 class UserSettings (
     @Id
     var id: Long,
+
+    @ManyToOne
+    @JoinColumn(name="current_rss_entry_id")
+    var currentRssEntry: RssEntry? = null,
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")

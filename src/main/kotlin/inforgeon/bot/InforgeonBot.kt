@@ -1,5 +1,7 @@
 package inforgeon.inforgeon.bot
 
+import inforgeon.entity.RssEntry
+import inforgeon.inforgeon.constant.*
 import inforgeon.inforgeon.service.BotApiService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
@@ -7,13 +9,12 @@ import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery
 import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import javax.annotation.PostConstruct
 
@@ -22,7 +23,7 @@ import javax.annotation.PostConstruct
 class InforgeonBot(
     @Value("\${inforgeon-bot.token}") private val token: String,
     @Value("\${inforgeon-bot.name}") private val name: String,
-    private val botApiService: BotApiService
+    private val service: BotApiService
 ) : TelegramLongPollingBot(token) {
     private val log = KotlinLogging.logger {}
 
@@ -35,71 +36,155 @@ class InforgeonBot(
     override fun getBotUsername() = name
 
     override fun onUpdateReceived(update: Update) {
-        update.apply {
-            if (hasMessage()) {
-                val user = botApiService.getUserSettings(message.from.id)
-
-
-
-            }
+        if (update.hasMessage()) {
+            handleMessage(update);
         }
 
-        if (update.hasMessage()) {
-            val currentMessage: Message = update.message
-            val currentChatId: Long = currentMessage.chatId
-
-            val keyboard = ReplyKeyboardMarkup()
-            keyboard.keyboard = listOf(
-                KeyboardRow().apply {
-                    add(KeyboardButton("TEST1"))
-                },
-                KeyboardRow().apply {
-                    add(KeyboardButton("TEST2"))
-                }
-            )
+        if (update.hasCallbackQuery()) {
+            handleCallbackQuery(update)
+        }
+    }
 
 
-            when (currentMessage.text) {
+    private fun handleMessage(update: Update) {
+        update.message.also { message ->
+            service.getUserSettings(message.from.id)
+
+            when (message.text) {
                 "/start" -> {
-                    execute(
-                        SendMessage().apply {
-                            replyMarkup = keyboard
-                            chatId = currentChatId.toString()
-                            text = "user: ${currentMessage.from.userName}, id: ${currentMessage.from.id}"
-                        }
-                    )
+                    deleteMessage(message)
+                    goMainMenu(message)
                 }
-
-                "/some" -> {
-                    execute(
-                        SendMessage().apply {
-                            replyMarkup = InlineKeyboardMarkup().also {
-                                it.keyboard = listOf(
-                                    listOf(
-                                        InlineKeyboardButton("LOL1").apply { callbackData = "LOLLL1" },
-                                        InlineKeyboardButton("LOL2").apply { callbackData = "LOLLL2" },
-                                    )
-                                )
-                            }
-                            chatId = currentChatId.toString()
-                            text = "Choice:"
-
-                        }
-                    )
-                }
-                /*                    if (userSettingsService.get(username) == null)
-                                        userSettingsService.initializeUser(username)
-
-                                    execute(
-
-                                        SendMessage()
-                                            .setChatId(message.chatId)
-                                            .setText(
-                                                "Привет! Я - бот Inforgeon, помогу тебе вырезать все ненужное из твоей новостной ленты.\n" +
-                                                        "Для начала работы со мной можно предварительно настроить твои любимые категории. Для этого выбери команду ..."
-                                            )
-                                    )*/
             }
         }
     }
+
+    private fun handleCallbackQuery(update: Update) {
+        update.callbackQuery.also { callbackQuery ->
+            service.getUserSettings(callbackQuery.from.id)
+
+            when (callbackQuery.data) {
+                "CATEGORY" -> goCategory(callbackQuery)
+
+                "JAVA" -> goNewestNews(callbackQuery, RssTopicName.JAVA)
+
+                "KOTLIN" -> goNewestNews(callbackQuery, RssTopicName.KOTLIN)
+
+                "NEWS" -> goNewestNews(callbackQuery, RssTopicName.NEWS)
+
+                "NEXT" -> goNextNews(callbackQuery)
+
+                "DISLIKE" -> goDislikeRssEntry(callbackQuery)
+
+                "MAIN_MENU" -> goMainMenu(callbackQuery.message)
+            }
+        }
+    }
+
+    private fun goCategory(callbackQuery: CallbackQuery) {
+        execute(
+            SendMessage().apply {
+                chatId = callbackQuery.message.chatId.toString()
+                text = "Выберете категорию"
+                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                    keyboardMarkup.keyboard = listOf(
+                        listOf(
+                            InlineKeyboardButton("JAVA").apply { callbackData = "JAVA" },
+                            InlineKeyboardButton("KOTLIN").apply { callbackData = "KOTLIN" },
+                            InlineKeyboardButton("NEWS").apply { callbackData = "NEWS" }
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    private fun goNewestNews(callbackQuery: CallbackQuery, rssTopicName: RssTopicName) {
+        val rssEntry = service.getNewestRssEntry(callbackQuery.message.chatId, rssTopicName)
+
+        service.getUserSettings(callbackQuery.from.id)!!.also {
+            service.saveUserSettings(it.apply { currentRssEntry = rssEntry })
+        }
+        execute(callbackQuery.message, rssEntry)
+
+    }
+
+    private fun goNextNews(callbackQuery: CallbackQuery) {
+        val userSettings = service.getUserSettings(callbackQuery.from.id)!!
+        val rssEntry = service.getNextRssEntry(
+            userSettings.id,
+            userSettings.currentRssEntry!!.topic,
+            userSettings.currentRssEntry!!.id
+        )
+
+        service.saveUserSettings(userSettings.apply { currentRssEntry = rssEntry })
+        execute(callbackQuery.message, rssEntry)
+    }
+
+    private fun execute(message: Message, rssEntry: RssEntry) {
+        execute(
+            SendMessage().apply {
+                chatId = message.chatId.toString()
+                text = prettyRssEntry(rssEntry)
+                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                    keyboardMarkup.keyboard = listOf(
+                        listOf(
+                            InlineKeyboardButton("Следующая").apply { callbackData = "NEXT" },
+                            InlineKeyboardButton("\uD83D\uDC4E").apply { callbackData = "DISLIKE" },
+                        ),
+                        listOf(
+                            InlineKeyboardButton("Главное меню").apply { callbackData = "MAIN_MENU" },
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    private fun goDislikeRssEntry(callbackQuery: CallbackQuery) {
+        val userSettings = service.getUserSettings(callbackQuery.from.id)!!
+        service.dislikeRssEntry(
+            userSettings.id,
+            userSettings.currentRssEntry!!.topic,
+            userSettings.currentRssEntry!!.id
+        )
+//        deleteMessage(callbackQuery.message)
+//        goNextNews(callbackQuery)
+    }
+
+    private fun goMainMenu(message: Message) {
+        execute(
+            SendMessage().apply {
+                chatId = message.chatId.toString()
+                text = "Основное меню"
+                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                    keyboardMarkup.keyboard = listOf(
+                        listOf(
+                            InlineKeyboardButton("Новости по теме").apply { callbackData = "CATEGORY" },
+                            InlineKeyboardButton("Сброс дизлайков").apply { callbackData = "RESET_DISLIKES" },
+                            InlineKeyboardButton("Не хочу смотреть").apply { callbackData = "MANUAL_DISLIKE" }
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    private fun deleteMessage(message: Message) {
+        execute(
+            DeleteMessage().apply {
+                chatId = message.chatId.toString()
+                messageId = message.messageId
+            }
+        )
+    }
+
+    private fun prettyRssEntry(rssEntry: RssEntry) =
+        """
+            Заголовок: ${rssEntry.title}
+            Автор: ${rssEntry.author}
+            Категория: ${rssEntry.topic}
+            Раздел: ${rssEntry.subtopic}
+            Ссылка: ${rssEntry.url}
+        """.trimIndent()
 }

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BotApiServiceImpl(
-    private val userSettingsService : UserSettingsService,
+    private val userSettingsService: UserSettingsService,
     private val rssEntryService: RssEntryService
 ) : BotApiService {
 
@@ -21,26 +21,31 @@ class BotApiServiceImpl(
     val threshold: Int? = null
 
     @Transactional
-    override fun getUserSettings(userId : Long) : UserSettings {
-        return userSettingsService.get(userId) ?: userSettingsService.initializeUser(userId)
+    override fun getUserSettings(userId: Long): UserSettings? {
+        return userSettingsService.get(userId) ?: userSettingsService.initializeUser(UserSettings(userId))
+    }
+
+    @Transactional
+    override fun saveUserSettings(userSettings: UserSettings): UserSettings {
+        return userSettingsService.initializeUser(userSettings)
     }
 
     @Transactional(readOnly = true)
-    override fun getNewestRssEntry(userId : Long, topicName: RssTopicName) : RssEntry {
+    override fun getNewestRssEntry(userId: Long, topicName: RssTopicName): RssEntry {
         val settings = userSettingsService.get(userId)
         val stopTags = getAllStopTags(settings!!, topicName)
         return rssEntryService.getNewest(topicName, stopTags)
     }
 
     @Transactional(readOnly = true)
-    override fun getNextRssEntry(userId : Long, topicName: RssTopicName, rssEntryId: Long) : RssEntry{
+    override fun getNextRssEntry(userId: Long, topicName: RssTopicName, rssEntryId: Long): RssEntry {
         val settings = userSettingsService.get(userId)
         val stopTags = getAllStopTags(settings!!, topicName)
         return rssEntryService.getNext(topicName, rssEntryId, stopTags)
     }
 
     @Transactional
-    override fun dislikeRssEntry(userId : Long, topicName: RssTopicName, rssEntryId: Long) {
+    override fun dislikeRssEntry(userId: Long, topicName: RssTopicName, rssEntryId: Long) {
         var settings = userSettingsService.get(userId)
         val rssEntry = rssEntryService.get(rssEntryId)
         // выделить все дизлайкнутые пользователем тэги
@@ -61,7 +66,7 @@ class BotApiServiceImpl(
     }
 
     @Transactional
-    override fun filterTag(userId : Long, topicName: RssTopicName, filteredTag: String) {
+    override fun filterTag(userId: Long, topicName: RssTopicName, filteredTag: String) {
         val settings = userSettingsService.get(userId)
         // выделить все дизлайкнутые пользователем тэги
         val allDislikedTags = getAllUserDislikedTags(settings!!, topicName)
@@ -70,7 +75,7 @@ class BotApiServiceImpl(
         if (allDislikedTags.contains(filteredTag)) {
             settings.dislikedTags
                 .filter { dislikesCounter -> dislikesCounter.topic == topicName && dislikesCounter.tag == filteredTag }
-                .forEach { filteredDislikesCounter -> filteredDislikesCounter.count = threshold!!}
+                .forEach { filteredDislikesCounter -> filteredDislikesCounter.count = threshold!! }
         } // если тэга нет, то создать стоп тэг
         else {
             settings.dislikedTags += DislikedTagCounter(topic = topicName, tag = filteredTag, count = threshold!!)
@@ -78,21 +83,21 @@ class BotApiServiceImpl(
     }
 
     @Transactional
-    override fun resetAllDislikes(userId : Long, topicName: RssTopicName) {
+    override fun resetAllDislikes(userId: Long, topicName: RssTopicName) {
         val settings = userSettingsService.get(userId)
         settings!!.dislikedTags
             .filter { dislikesCounter -> dislikesCounter.topic == topicName }
             .forEach { it.count = 0 }
     }
 
-    private fun getAllStopTags(settings: UserSettings, topicName: RssTopicName) : Set<String> {
+    private fun getAllStopTags(settings: UserSettings, topicName: RssTopicName): Set<String> {
         return settings.dislikedTags
             .filter { it.count >= threshold!! && it.topic == topicName }
             .map { it.tag }
             .toSet()
     }
 
-    private fun getAllUserDislikedTags(settings: UserSettings, topicName: RssTopicName, ): Set<String> {
+    private fun getAllUserDislikedTags(settings: UserSettings, topicName: RssTopicName): Set<String> {
         return settings.dislikedTags
             .map { Pair(it.topic, it.tag) }
             .filter { it.first == topicName }.map { it.second }.toSet()
