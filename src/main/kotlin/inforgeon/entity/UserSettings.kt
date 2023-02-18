@@ -12,7 +12,7 @@ class UserSettings (
     var id: Long,
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_settings_id")
     var dislikedTags: List<DislikedTagCounter> = mutableListOf()
 ) {
 

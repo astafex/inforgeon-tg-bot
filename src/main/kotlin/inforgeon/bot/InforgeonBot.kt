@@ -3,6 +3,7 @@ package inforgeon.inforgeon.bot
 import inforgeon.inforgeon.service.BotApiService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
@@ -19,6 +20,7 @@ import javax.annotation.PostConstruct
 
 
 @Component
+@ConditionalOnProperty(prefix = "rss.bot", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 class InforgeonBot(
     @Value("\${inforgeon-bot.token}") private val token: String,
     @Value("\${inforgeon-bot.name}") private val name: String,

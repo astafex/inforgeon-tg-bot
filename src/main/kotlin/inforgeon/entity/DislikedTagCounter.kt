@@ -1,6 +1,7 @@
 package inforgeon.inforgeon.entity
 
 import inforgeon.inforgeon.constant.RssTopicName
+import java.util.*
 import javax.persistence.*
 
 /**
@@ -11,8 +12,7 @@ import javax.persistence.*
 class DislikedTagCounter (
 
     @Id
-    @GeneratedValue
-    var id: Long? = null,
+    var id: UUID = UUID.randomUUID(),
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "topic", nullable = false, length = 20)
@@ -23,6 +23,7 @@ class DislikedTagCounter (
 
     @Column(name = "count", nullable = false)
     var count: Int,
+
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
