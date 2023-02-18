@@ -3,11 +3,10 @@ package inforgeon.inforgeon.bot
 import inforgeon.bot.ChatButton
 import inforgeon.bot.ChatCommand
 import inforgeon.entity.RssEntry
-import inforgeon.inforgeon.constant.*
+import inforgeon.inforgeon.constant.RssTopicName
 import inforgeon.inforgeon.service.BotApiService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import org.telegram.telegrambots.bots.TelegramLongPollingBot
 import org.telegram.telegrambots.meta.TelegramBotsApi
