@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/kotlin
     username: postgres #@db.user@
-    password: 123 #@db.pass@
+    password: root #@db.pass@
     driver-class-name: org.postgresql.Driver
     hikari:
       max-lifetime: 2000000
@@ -21,6 +21,8 @@ spring:
       ddl-auto: update
 
 rss:
+  bot:
+    enabled: false
   scheduler:
     enabled: false
     cron: "0 * * * * *"  # per 1 minutes - for testing
