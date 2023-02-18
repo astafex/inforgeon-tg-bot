@@ -3,6 +3,7 @@ package inforgeon.integration
 import inforgeon.checkEntryTags
 import inforgeon.configureParsers
 import inforgeon.inforgeon.constant.RssTopicName.JAVA
+import inforgeon.inforgeon.entity.UserSettings
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.annotation.Transactional
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional
  * Интеграционные тесты со стандартными тестовыми настройками:
  *  - Отключенена категоризация по шедулеру
  *  - Отключен функционал бота, т.к. он ломится в телегу, а это нам не надо
+ *  - Выставлена настройка в 1 дизлайк для блокировки новостей по подтеме
  */
 internal class IntegrationTest : AbstractIntegrationTest() {
 
@@ -31,7 +33,7 @@ internal class IntegrationTest : AbstractIntegrationTest() {
 
         categorizer.rssCategorize(JAVA)
 
-        userSettingsService.initializeUser(1)
+        userSettingsService.initializeUser(UserSettings(1))
 
         Assertions.assertTrue(
             checkEntryTags(
@@ -61,7 +63,7 @@ internal class IntegrationTest : AbstractIntegrationTest() {
 
         categorizer.rssCategorize(JAVA)
 
-        userSettingsService.initializeUser(1)
+        userSettingsService.initializeUser(UserSettings(1))
         val first = botApiService.getNewestRssEntry(1, JAVA)
 
         botApiService.dislikeRssEntry(1, JAVA, first.id)
@@ -101,7 +103,7 @@ internal class IntegrationTest : AbstractIntegrationTest() {
 
         categorizer.rssCategorize(JAVA)
 
-        userSettingsService.initializeUser(1)
+        userSettingsService.initializeUser(UserSettings(1))
 
         val first = botApiService.getNewestRssEntry(1, JAVA)
 

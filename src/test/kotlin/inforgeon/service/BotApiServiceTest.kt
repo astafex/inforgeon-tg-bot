@@ -24,9 +24,9 @@ internal class BotApiServiceTest : BaseSpringTest() {
 
     @Test
     fun userRegistration() {
-        val settings = botApiService.userRegistration(testUser)
+        val settings = botApiService.getUserSettings(testUser)
         assertNotNull(settings)
-        assertEquals(testUser, settings.id)
+        assertEquals(testUser, settings?.id)
     }
 
     @Test

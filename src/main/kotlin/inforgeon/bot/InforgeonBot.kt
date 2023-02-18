@@ -23,7 +23,6 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import javax.annotation.PostConstruct
 
 @Component
-@ConditionalOnProperty(prefix = "rss.bot", name = ["enabled"], havingValue = "true", matchIfMissing = true)
 class InforgeonBot(
     @Value("\${inforgeon-bot.token}") private val token: String,
     @Value("\${inforgeon-bot.name}") private val name: String,

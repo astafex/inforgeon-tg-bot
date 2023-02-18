@@ -9,6 +9,8 @@ import inforgeon.inforgeon.service.BotApiService
 import inforgeon.inforgeon.service.UserSettingsService
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor
+import org.springframework.beans.factory.support.BeanDefinitionRegistry
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -37,6 +39,19 @@ abstract class AbstractIntegrationTest {
         @Bean
         @Primary
         fun restHabrRssParser() = TestHabrRssParser
+
+        /**
+         * Пост процессор, не позволяющий создасться бину InforgeonBot
+         */
+        @Bean
+        fun disableInforgeonBot(): BeanFactoryPostProcessor {
+            return BeanFactoryPostProcessor {
+                val inforgeonBotBeanName = "inforgeonBot"
+                if (it.containsBeanDefinition(inforgeonBotBeanName)) {
+                    (it as BeanDefinitionRegistry).removeBeanDefinition(inforgeonBotBeanName)
+                }
+            }
+        }
 
     }
 

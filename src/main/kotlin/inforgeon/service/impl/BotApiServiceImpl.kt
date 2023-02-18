@@ -4,8 +4,6 @@ import inforgeon.entity.RssEntry
 import inforgeon.inforgeon.constant.RssTopicName
 import inforgeon.inforgeon.entity.DislikedTagCounter
 import inforgeon.inforgeon.entity.UserSettings
-import inforgeon.inforgeon.repository.DislikedTagCounterRepository
-import inforgeon.inforgeon.repository.DislikedTagCounterRepository
 import inforgeon.inforgeon.service.BotApiService
 import inforgeon.inforgeon.service.RssEntryService
 import inforgeon.inforgeon.service.UserSettingsService
@@ -16,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class BotApiServiceImpl(
     private val userSettingsService: UserSettingsService,
-    private val rssEntryService: RssEntryService,
-    private val dislikedTagCounterRepository: DislikedTagCounterRepository
+    private val rssEntryService: RssEntryService
 ) : BotApiService {
 
     @Value("\${rss.dislikes.threshold}")
