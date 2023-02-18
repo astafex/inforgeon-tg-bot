@@ -2,6 +2,7 @@ package inforgeon.entity
 
 import inforgeon.inforgeon.constant.RssSubtopicName
 import inforgeon.inforgeon.constant.RssTopicName
+import inforgeon.inforgeon.entity.UserSettings
 import javax.persistence.*
 
 /**
@@ -9,7 +10,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(schema = "bot", name = "rss_entry")
-class RssEntry (
+class RssEntry(
     @Id
     var id: Long = 0,
 
@@ -36,7 +37,10 @@ class RssEntry (
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "tags", joinColumns = [JoinColumn(name = "entry_id")])
     @Column(name = "tag", length = 100)
-    var tags: List<String> = ArrayList()
+    var tags: List<String> = ArrayList(),
+
+    @OneToMany(mappedBy = "currentRssEntry")
+    var users: Set<UserSettings>? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

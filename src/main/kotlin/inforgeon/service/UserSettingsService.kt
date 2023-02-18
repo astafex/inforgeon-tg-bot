@@ -9,7 +9,7 @@ interface UserSettingsService {
 
     fun get(userId : Long) : UserSettings?
 
-    fun initializeUser(userId : Long) : UserSettings
+    fun initializeUser(userSettings : UserSettings) : UserSettings
 
     fun save(settings: UserSettings) : UserSettings
 

@@ -10,9 +10,11 @@ import inforgeon.inforgeon.entity.UserSettings
 interface BotApiService {
 
     /**
-     * Зарегистрировать пользователя
+     * Получить данные пользователя
      */
-    fun userRegistration(userId: Long) : UserSettings
+    fun getUserSettings(userId: Long) : UserSettings?
+
+    fun saveUserSettings(userSettings: UserSettings): UserSettings
 
     /**
      * Получить самую новую новость по выбранной теме
@@ -38,5 +40,4 @@ interface BotApiService {
      * Сбросить все дизлайки по выбранной теме
      */
     fun resetAllDislikes(userId : Long, topicName: RssTopicName)
-
 }

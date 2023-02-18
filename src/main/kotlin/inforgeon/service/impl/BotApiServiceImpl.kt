@@ -5,6 +5,7 @@ import inforgeon.inforgeon.constant.RssTopicName
 import inforgeon.inforgeon.entity.DislikedTagCounter
 import inforgeon.inforgeon.entity.UserSettings
 import inforgeon.inforgeon.repository.DislikedTagCounterRepository
+import inforgeon.inforgeon.repository.DislikedTagCounterRepository
 import inforgeon.inforgeon.service.BotApiService
 import inforgeon.inforgeon.service.RssEntryService
 import inforgeon.inforgeon.service.UserSettingsService
@@ -23,8 +24,13 @@ class BotApiServiceImpl(
     val threshold: Int? = null
 
     @Transactional
-    override fun userRegistration(userId: Long): UserSettings {
-        return userSettingsService.get(userId) ?: userSettingsService.initializeUser(userId)
+    override fun getUserSettings(userId: Long): UserSettings? {
+        return userSettingsService.get(userId) ?: userSettingsService.initializeUser(UserSettings(userId))
+    }
+
+    @Transactional
+    override fun saveUserSettings(userSettings: UserSettings): UserSettings {
+        return userSettingsService.initializeUser(userSettings)
     }
 
     @Transactional(readOnly = true)
