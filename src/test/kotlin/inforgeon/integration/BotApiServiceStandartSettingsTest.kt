@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional
  *  - Отключен функционал бота, т.к. он ломится в телегу, а это нам не надо
  *  - Выставлена настройка в 1 дизлайк для блокировки новостей по подтеме
  */
-internal class IntegrationTest : AbstractIntegrationTest() {
+internal class BotApiServiceStandartSettingsTest : AbstractIntegrationTest() {
 
 
     /**
@@ -108,6 +108,10 @@ internal class IntegrationTest : AbstractIntegrationTest() {
         val first = botApiService.getNewestRssEntry(1, JAVA)
 
         botApiService.dislikeRssEntry(1, JAVA, first.id)
+
+        Assertions.assertThrows(NoSuchElementException::class.java) {
+            botApiService.getNewestRssEntry(1, JAVA)
+        }
 
         botApiService.resetAllDislikes(1, JAVA)
 

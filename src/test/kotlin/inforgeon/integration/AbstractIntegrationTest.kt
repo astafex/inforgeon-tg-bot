@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.jdbc.Sql
 
 
 /**
@@ -26,7 +26,6 @@ import org.springframework.test.context.jdbc.Sql
 @SpringBootTest(classes = [App::class])
 @Import(AbstractIntegrationTest.TestConfig::class)
 @ActiveProfiles("test")
-@Sql("classpath:/sql/truncate.sql")
 abstract class AbstractIntegrationTest {
 
     @Configuration
@@ -64,8 +63,15 @@ abstract class AbstractIntegrationTest {
     @Autowired
     protected lateinit var userSettingsService: UserSettingsService
 
+    @Autowired
+    private lateinit var jdbcTemplate: JdbcTemplate
+
     @BeforeEach
     fun setUp() {
+        jdbcTemplate.update("delete from bot.tags")
+        jdbcTemplate.update("delete from bot.disliked")
+        jdbcTemplate.update("delete from bot.user_settings")
+        jdbcTemplate.update("delete from bot.rss_entry")
         clearParsersContent()
     }
 
