@@ -1,5 +1,7 @@
 package inforgeon.inforgeon.bot
 
+import inforgeon.bot.ChatButton
+import inforgeon.bot.ChatCommand
 import inforgeon.entity.RssEntry
 import inforgeon.inforgeon.constant.*
 import inforgeon.inforgeon.service.BotApiService
@@ -15,9 +17,9 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 import javax.annotation.PostConstruct
-
 
 @Component
 class InforgeonBot(
@@ -37,23 +39,30 @@ class InforgeonBot(
 
     override fun onUpdateReceived(update: Update) {
         if (update.hasMessage()) {
-            handleMessage(update);
+            service.getUserSettings(update.message.from.id)
+            handleMessage(update)
+
+            deleteMessage(update.message)
         }
 
         if (update.hasCallbackQuery()) {
+            service.getUserSettings(update.callbackQuery.from.id)
             handleCallbackQuery(update)
+
+            deleteMessage(update.callbackQuery.message)
         }
     }
 
-
     private fun handleMessage(update: Update) {
         update.message.also { message ->
-            service.getUserSettings(message.from.id)
-
-            when (message.text) {
-                "/start" -> {
-                    deleteMessage(message)
-                    goMainMenu(message)
+            with(message.text) {
+                when {
+                    ChatCommand.START.command == this -> goMainMenu(message)
+                    else -> goMainMenu(
+                        message, """
+                        Я такие слова еще не знаю.
+                        Может попробуете что-то из этого?""".trimMargin()
+                    )
                 }
             }
         }
@@ -61,93 +70,84 @@ class InforgeonBot(
 
     private fun handleCallbackQuery(update: Update) {
         update.callbackQuery.also { callbackQuery ->
-            service.getUserSettings(callbackQuery.from.id)
-
             when (callbackQuery.data) {
-                ChatButton.CATEGORY.name -> goCategory(callbackQuery)
-
+                ChatButton.MAIN_MENU.name -> goMainMenu(callbackQuery.message)
                 ChatButton.RESET_DISLIKES.name -> goResetDislikes(callbackQuery)
 
+                ChatButton.CATEGORY_NEWS_LINE.name -> goCategoryNewsLine(callbackQuery)
                 ChatButton.JAVA.name -> goNewestNews(callbackQuery, RssTopicName.JAVA)
-
                 ChatButton.KOTLIN.name -> goNewestNews(callbackQuery, RssTopicName.KOTLIN)
-
                 ChatButton.NEWS.name -> goNewestNews(callbackQuery, RssTopicName.NEWS)
-
                 ChatButton.NEXT.name -> goNextNews(callbackQuery)
-
                 ChatButton.DISLIKE.name -> goDislikeRssEntry(callbackQuery)
-
-                ChatButton.MAIN_MENU.name -> goMainMenu(callbackQuery.message)
             }
         }
     }
 
-    private fun goCategory(callbackQuery: CallbackQuery) {
-        execute(
-            SendMessage().apply {
-                chatId = callbackQuery.message.chatId.toString()
-                text = "Выберете категорию"
-                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
-                    keyboardMarkup.keyboard = listOf(
-                        listOf(
-                            ChatButton.JAVA.asInlineKeyboardButton(),
-                            ChatButton.KOTLIN.asInlineKeyboardButton(),
-                            ChatButton.NEWS.asInlineKeyboardButton()
-                        )
+    private fun goMainMenu(message: Message, textMessage: String = "Основное меню") {
+        execute(SendMessage().apply {
+            chatId = message.chatId.toString()
+            text = textMessage
+
+            replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                keyboardMarkup.keyboard = listOf(
+                    listOf(
+                        ChatButton.CATEGORY_NEWS_LINE.asInlineKeyboardButton(),
+                        ChatButton.RESET_DISLIKES.asInlineKeyboardButton()
                     )
-                }
+                )
             }
-        )
+        })
     }
 
-    private fun goMainMenu(message: Message) {
-        execute(
-            SendMessage().apply {
-                chatId = message.chatId.toString()
-                text = "Основное меню"
-                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
-                    keyboardMarkup.keyboard = listOf(
-                        listOf(
-                            ChatButton.CATEGORY.asInlineKeyboardButton(),
-                            ChatButton.RESET_DISLIKES.asInlineKeyboardButton(),
-                            ChatButton.MANUAL_DISLIKE.asInlineKeyboardButton()
-                        )
+    private fun goCategoryNewsLine(callbackQuery: CallbackQuery) {
+        execute(SendMessage().apply {
+            chatId = callbackQuery.message.chatId.toString()
+            text = "Выберете тему новостей:"
+            replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                keyboardMarkup.keyboard = listOf(
+                    listOf(
+                        ChatButton.JAVA.asInlineKeyboardButton(),
+                        ChatButton.KOTLIN.asInlineKeyboardButton(),
+                        ChatButton.NEWS.asInlineKeyboardButton()
+                    ),
+                    listOf(
+                        ChatButton.MAIN_MENU.asInlineKeyboardButton(),
                     )
-                }
+                )
             }
-        )
+        })
     }
 
     private fun goResetDislikes(callbackQuery: CallbackQuery) {
         RssTopicName.values().forEach { rssTopic ->
             service.resetAllDislikes(callbackQuery.from.id, rssTopic)
         }
+        goMainMenu(callbackQuery.message, "Дизлайки успешно сброшены!")
     }
 
     private fun goNewestNews(callbackQuery: CallbackQuery, rssTopic: RssTopicName) {
-        val rssEntry: RssEntry
         try {
-            rssEntry = service.getNewestRssEntry(callbackQuery.message.chatId, rssTopic)
+            val rssEntry: RssEntry = service.getNewestRssEntry(callbackQuery.message.chatId, rssTopic)
             service.getUserSettings(callbackQuery.from.id)!!.also {
                 service.saveUserSettings(it.apply { currentRssEntry = rssEntry })
             }
             getNews(callbackQuery.message, rssEntry)
+
         } catch (e: NoSuchElementException) {
             goNoNewNews(callbackQuery, rssTopic)
         }
     }
 
-
     private fun goNextNews(callbackQuery: CallbackQuery) {
-        val rssEntry: RssEntry
         val userSettings = service.getUserSettings(callbackQuery.from.id)!!
         try {
-            rssEntry = service.getNextRssEntry(
+            val rssEntry: RssEntry = service.getNextRssEntry(
                 userSettings.id,
                 userSettings.currentRssEntry!!.topic,
                 userSettings.currentRssEntry!!.id
             )
+
             service.saveUserSettings(userSettings.apply { currentRssEntry = rssEntry })
             getNews(callbackQuery.message, rssEntry)
         } catch (e: NoSuchElementException) {
@@ -156,42 +156,43 @@ class InforgeonBot(
     }
 
     private fun getNews(message: Message, rssEntry: RssEntry) {
-        execute(
-            SendMessage().apply {
-                chatId = message.chatId.toString()
-                text = rssEntry.asPrettyString()
-                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
-                    keyboardMarkup.keyboard = listOf(
-                        listOf(
-                            ChatButton.NEXT.asInlineKeyboardButton(),
-                            ChatButton.DISLIKE.asInlineKeyboardButton(),
-                        ),
-                        listOf(
-                            ChatButton.MAIN_MENU.asInlineKeyboardButton()
-                        )
+        execute(SendMessage().apply {
+            chatId = message.chatId.toString()
+            text = rssEntry.asPrettyString()
+            replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                keyboardMarkup.keyboard = listOf(
+                    rssEntry.tags.map { InlineKeyboardButton(it).apply { callbackData = it } },
+                    listOf(
+                        ChatButton.NEXT.asInlineKeyboardButton(),
+                        ChatButton.DISLIKE.asInlineKeyboardButton(),
+                    ),
+                    listOf(
+                        ChatButton.MAIN_MENU.asInlineKeyboardButton()
                     )
-                }
+                )
             }
-        )
+        })
     }
 
     private fun goNoNewNews(callbackQuery: CallbackQuery, rssTopic: RssTopicName) {
-        execute(
-            SendMessage().apply {
-                chatId = callbackQuery.message.chatId.toString()
-                text = """
-                    Увы, новых новостей по теме '${rssTopic.name}' нет.
+        execute(SendMessage().apply {
+            chatId = callbackQuery.message.chatId.toString()
+            text = """
+                    К сожалению, новых новостей по теме ${rssTopic.name} нет.
                     Вы можете выбрать другую тему или сбросить дизлайки
                     """.trimIndent()
-                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
-                    keyboardMarkup.keyboard = listOf(
-                        listOf(
-                            ChatButton.MAIN_MENU.asInlineKeyboardButton()
-                        )
+            replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                keyboardMarkup.keyboard = listOf(
+                    listOf(
+                        ChatButton.CATEGORY_NEWS_LINE.asInlineKeyboardButton(),
+                        ChatButton.RESET_DISLIKES.asInlineKeyboardButton(),
+                    ),
+                    listOf(
+                        ChatButton.MAIN_MENU.asInlineKeyboardButton()
                     )
-                }
+                )
             }
-        )
+        })
     }
 
     private fun goDislikeRssEntry(callbackQuery: CallbackQuery) {
@@ -202,24 +203,25 @@ class InforgeonBot(
             userSettings.currentRssEntry!!.id
         )
         goNextNews(callbackQuery)
-        deleteMessage(callbackQuery.message)
     }
 
-
     private fun deleteMessage(message: Message) {
-        execute(
-            DeleteMessage().apply {
-                chatId = message.chatId.toString()
-                messageId = message.messageId
+        (message.messageId - 1..message.messageId).forEach {
+            try {
+                execute(DeleteMessage().apply {
+                    chatId = message.chatId.toString()
+                    messageId = it
+                })
+            } catch (exception: TelegramApiRequestException) {
+                log.debug { exception }
             }
-        )
+        }
     }
 
     private fun ChatButton.asInlineKeyboardButton() =
         InlineKeyboardButton(text).apply { callbackData = name }
 
     private fun RssEntry.asPrettyString() = """
-            Заголовок: $title
             Автор: $author
             Категория: $topic
             Раздел: $subtopic

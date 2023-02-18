@@ -1,8 +1,6 @@
 inforgeon-bot:
-#  token: 6244400944:AAFKBxMZEImkHAKy4SjsrBVWtLiPg21C_zE
-#  name: inforgeon_bot
-  token: 6266412614:AAH6ufPk9k0__VIgICTt9_pDZwpMaYssc1M
-  name: inforgeon_test_bot
+  token: 6244400944:AAFKBxMZEImkHAKy4SjsrBVWtLiPg21C_zE
+  name: inforgeon_bot
 
 server:
   port: 3333
