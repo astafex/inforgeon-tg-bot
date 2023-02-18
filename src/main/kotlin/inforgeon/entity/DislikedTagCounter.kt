@@ -12,7 +12,8 @@ import javax.persistence.*
 class DislikedTagCounter (
 
     @Id
-    var id: UUID = UUID.randomUUID(),
+    @GeneratedValue
+    var id: Long? = null,
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "topic", nullable = false, length = 20)
@@ -24,6 +25,9 @@ class DislikedTagCounter (
     @Column(name = "count", nullable = false)
     var count: Int,
 
+    @ManyToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
+    @JoinColumn(name="settings_id")
+    var settings: UserSettings? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

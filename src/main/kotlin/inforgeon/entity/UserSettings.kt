@@ -1,6 +1,8 @@
 package inforgeon.inforgeon.entity
 
 import inforgeon.entity.RssEntry
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
 import javax.persistence.*
 
 /**
@@ -16,8 +18,8 @@ class UserSettings (
     @JoinColumn(name="current_rss_entry_id")
     var currentRssEntry: RssEntry? = null,
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_settings_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "settings")
+    @Cascade(CascadeType.ALL)
     var dislikedTags: List<DislikedTagCounter> = mutableListOf()
 ) {
 

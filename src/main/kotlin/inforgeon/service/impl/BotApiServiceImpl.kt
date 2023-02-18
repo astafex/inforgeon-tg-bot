@@ -63,15 +63,11 @@ class BotApiServiceImpl(
                     .forEach { filteredDislikesCounter -> filteredDislikesCounter.count++ }
             } // если тэг нет, то создать дизлайк
             else {
-                settings.dislikedTags += (dislikedTagCounterRepository.save(
-                    DislikedTagCounter(
-                        topic = topicName,
-                        tag = entryTag,
-                        count = 1
-                    )
-                ))
+                settings.dislikedTags +=
+                    DislikedTagCounter(topic = topicName, tag = entryTag, count = 1, settings = settings)
             }
         }
+
     }
 
     @Transactional
@@ -87,11 +83,8 @@ class BotApiServiceImpl(
                 .forEach { filteredDislikesCounter -> filteredDislikesCounter.count = threshold!! }
         } // если тэга нет, то создать стоп тэг
         else {
-            settings.dislikedTags += DislikedTagCounter(
-                topic = topicName,
-                tag = filteredTag,
-                count = threshold!!
-            )
+            settings.dislikedTags +=
+                DislikedTagCounter(topic = topicName, tag = filteredTag, count = threshold!!, settings = settings)
         }
     }
 
