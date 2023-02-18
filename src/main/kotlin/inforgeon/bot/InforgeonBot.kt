@@ -161,7 +161,6 @@ class InforgeonBot(
             text = rssEntry.asPrettyString()
             replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
                 keyboardMarkup.keyboard = listOf(
-                    rssEntry.tags.map { InlineKeyboardButton(it).apply { callbackData = it } },
                     listOf(
                         ChatButton.NEXT.asInlineKeyboardButton(),
                         ChatButton.DISLIKE.asInlineKeyboardButton(),
