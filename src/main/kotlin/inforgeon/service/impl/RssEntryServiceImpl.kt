@@ -43,13 +43,13 @@ class RssEntryServiceImpl(private val repository: RssEntryRepository) : RssEntry
     @Throws(NoSuchElementException::class)
     override fun getNext(topic: RssTopicName, rssEntryId: Long, stopTags: Collection<String>?): RssEntry {
         return if (stopTags == null || stopTags.isEmpty()) {
-            repository.findFirstByTopicAndIdLessThanOrderByIdDesc(topic, rssEntryId).orElseThrow()
+            repository.findFirstByTopicAndIdLessThanOrderByIdDesc(topic, rssEntryId).orElse(this.getNewest(topic, stopTags))
         } else {
     //            repository.findNextWithoutDisliked(topic, rssEntryId, stopTags.toList()).orElseThrow()
             val filteredIds = repository.findAllByTagsIn(stopTags.toList()).map {it.id}.distinct()
             repository
                 .findFirstByTopicAndIdNotInAndIdLessThanOrderByIdDesc(topic, filteredIds, rssEntryId)
-                .orElseThrow()
+                .orElse(this.getNewest(topic, stopTags))
         }
     }
 }

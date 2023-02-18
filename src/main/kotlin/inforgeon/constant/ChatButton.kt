@@ -1,18 +1,13 @@
 package inforgeon.inforgeon.constant
 
-enum class ButtonMainMenu(val text: String) {
-    GET_NEWS("Новости по теме"),
+enum class ChatButton(val text: String) {
+    CATEGORY("Новости по теме"),
     RESET_DISLIKES("Сброс дизлайков"),
-    MANUAL_DISLIKE_TAG("Не хочу смотреть"),
+    MANUAL_DISLIKE("Не хочу смотреть"),
+    NEXT("Следующая новость"),
+    DISLIKE("\uD83D\uDC4E"),
+    MAIN_MENU("Главное меню"),
+    JAVA("JAVA"),
+    KOTLIN("KOTLIN"),
+    NEWS("NEWS")
 }
-
-enum class ButtonNewsCategoryMenu {
-    JAVA, KOTLIN, NEWS
-}
-
-enum class ButtonNewsLineMenu(val text: String) {
-    DISLIKE("Dislike"),
-    NEXT("Следующая"),
-    MAIN_MENU("Главное меню")
-}
-

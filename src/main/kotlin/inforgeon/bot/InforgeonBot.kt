@@ -64,19 +64,21 @@ class InforgeonBot(
             service.getUserSettings(callbackQuery.from.id)
 
             when (callbackQuery.data) {
-                "CATEGORY" -> goCategory(callbackQuery)
+                ChatButton.CATEGORY.name -> goCategory(callbackQuery)
 
-                "JAVA" -> goNewestNews(callbackQuery, RssTopicName.JAVA)
+                ChatButton.RESET_DISLIKES.name -> goResetDislikes(callbackQuery)
 
-                "KOTLIN" -> goNewestNews(callbackQuery, RssTopicName.KOTLIN)
+                ChatButton.JAVA.name -> goNewestNews(callbackQuery, RssTopicName.JAVA)
 
-                "NEWS" -> goNewestNews(callbackQuery, RssTopicName.NEWS)
+                ChatButton.KOTLIN.name -> goNewestNews(callbackQuery, RssTopicName.KOTLIN)
 
-                "NEXT" -> goNextNews(callbackQuery)
+                ChatButton.NEWS.name -> goNewestNews(callbackQuery, RssTopicName.NEWS)
 
-                "DISLIKE" -> goDislikeRssEntry(callbackQuery)
+                ChatButton.NEXT.name -> goNextNews(callbackQuery)
 
-                "MAIN_MENU" -> goMainMenu(callbackQuery.message)
+                ChatButton.DISLIKE.name -> goDislikeRssEntry(callbackQuery)
+
+                ChatButton.MAIN_MENU.name -> goMainMenu(callbackQuery.message)
             }
         }
     }
@@ -89,9 +91,9 @@ class InforgeonBot(
                 replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
                     keyboardMarkup.keyboard = listOf(
                         listOf(
-                            InlineKeyboardButton("JAVA").apply { callbackData = "JAVA" },
-                            InlineKeyboardButton("KOTLIN").apply { callbackData = "KOTLIN" },
-                            InlineKeyboardButton("NEWS").apply { callbackData = "NEWS" }
+                            ChatButton.JAVA.asInlineKeyboardButton(),
+                            ChatButton.KOTLIN.asInlineKeyboardButton(),
+                            ChatButton.NEWS.asInlineKeyboardButton()
                         )
                     )
                 }
@@ -99,41 +101,92 @@ class InforgeonBot(
         )
     }
 
-    private fun goNewestNews(callbackQuery: CallbackQuery, rssTopicName: RssTopicName) {
-        val rssEntry = service.getNewestRssEntry(callbackQuery.message.chatId, rssTopicName)
-
-        service.getUserSettings(callbackQuery.from.id)!!.also {
-            service.saveUserSettings(it.apply { currentRssEntry = rssEntry })
-        }
-        execute(callbackQuery.message, rssEntry)
-
-    }
-
-    private fun goNextNews(callbackQuery: CallbackQuery) {
-        val userSettings = service.getUserSettings(callbackQuery.from.id)!!
-        val rssEntry = service.getNextRssEntry(
-            userSettings.id,
-            userSettings.currentRssEntry!!.topic,
-            userSettings.currentRssEntry!!.id
-        )
-
-        service.saveUserSettings(userSettings.apply { currentRssEntry = rssEntry })
-        execute(callbackQuery.message, rssEntry)
-    }
-
-    private fun execute(message: Message, rssEntry: RssEntry) {
+    private fun goMainMenu(message: Message) {
         execute(
             SendMessage().apply {
                 chatId = message.chatId.toString()
-                text = prettyRssEntry(rssEntry)
+                text = "Основное меню"
                 replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
                     keyboardMarkup.keyboard = listOf(
                         listOf(
-                            InlineKeyboardButton("Следующая").apply { callbackData = "NEXT" },
-                            InlineKeyboardButton("\uD83D\uDC4E").apply { callbackData = "DISLIKE" },
+                            ChatButton.CATEGORY.asInlineKeyboardButton(),
+                            ChatButton.RESET_DISLIKES.asInlineKeyboardButton(),
+                            ChatButton.MANUAL_DISLIKE.asInlineKeyboardButton()
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    private fun goResetDislikes(callbackQuery: CallbackQuery) {
+        RssTopicName.values().forEach { rssTopic ->
+            service.resetAllDislikes(callbackQuery.from.id, rssTopic)
+        }
+    }
+
+    private fun goNewestNews(callbackQuery: CallbackQuery, rssTopic: RssTopicName) {
+        val rssEntry: RssEntry
+        try {
+            rssEntry = service.getNewestRssEntry(callbackQuery.message.chatId, rssTopic)
+            service.getUserSettings(callbackQuery.from.id)!!.also {
+                service.saveUserSettings(it.apply { currentRssEntry = rssEntry })
+            }
+            getNews(callbackQuery.message, rssEntry)
+        } catch (e: NoSuchElementException) {
+            goNoNewNews(callbackQuery, rssTopic)
+        }
+    }
+
+
+    private fun goNextNews(callbackQuery: CallbackQuery) {
+        val rssEntry: RssEntry
+        val userSettings = service.getUserSettings(callbackQuery.from.id)!!
+        try {
+            rssEntry = service.getNextRssEntry(
+                userSettings.id,
+                userSettings.currentRssEntry!!.topic,
+                userSettings.currentRssEntry!!.id
+            )
+            service.saveUserSettings(userSettings.apply { currentRssEntry = rssEntry })
+            getNews(callbackQuery.message, rssEntry)
+        } catch (e: NoSuchElementException) {
+            goNoNewNews(callbackQuery, userSettings.currentRssEntry!!.topic)
+        }
+    }
+
+    private fun getNews(message: Message, rssEntry: RssEntry) {
+        execute(
+            SendMessage().apply {
+                chatId = message.chatId.toString()
+                text = rssEntry.asPrettyString()
+                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                    keyboardMarkup.keyboard = listOf(
+                        listOf(
+                            ChatButton.NEXT.asInlineKeyboardButton(),
+                            ChatButton.DISLIKE.asInlineKeyboardButton(),
                         ),
                         listOf(
-                            InlineKeyboardButton("Главное меню").apply { callbackData = "MAIN_MENU" },
+                            ChatButton.MAIN_MENU.asInlineKeyboardButton()
+                        )
+                    )
+                }
+            }
+        )
+    }
+
+    private fun goNoNewNews(callbackQuery: CallbackQuery, rssTopic: RssTopicName) {
+        execute(
+            SendMessage().apply {
+                chatId = callbackQuery.message.chatId.toString()
+                text = """
+                    Увы, новых новостей по теме '${rssTopic.name}' нет.
+                    Вы можете выбрать другую тему или сбросить дизлайки
+                    """.trimIndent()
+                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                    keyboardMarkup.keyboard = listOf(
+                        listOf(
+                            ChatButton.MAIN_MENU.asInlineKeyboardButton()
                         )
                     )
                 }
@@ -148,27 +201,10 @@ class InforgeonBot(
             userSettings.currentRssEntry!!.topic,
             userSettings.currentRssEntry!!.id
         )
-//        deleteMessage(callbackQuery.message)
-//        goNextNews(callbackQuery)
+        goNextNews(callbackQuery)
+        deleteMessage(callbackQuery.message)
     }
 
-    private fun goMainMenu(message: Message) {
-        execute(
-            SendMessage().apply {
-                chatId = message.chatId.toString()
-                text = "Основное меню"
-                replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
-                    keyboardMarkup.keyboard = listOf(
-                        listOf(
-                            InlineKeyboardButton("Новости по теме").apply { callbackData = "CATEGORY" },
-                            InlineKeyboardButton("Сброс дизлайков").apply { callbackData = "RESET_DISLIKES" },
-                            InlineKeyboardButton("Не хочу смотреть").apply { callbackData = "MANUAL_DISLIKE" }
-                        )
-                    )
-                }
-            }
-        )
-    }
 
     private fun deleteMessage(message: Message) {
         execute(
@@ -179,12 +215,14 @@ class InforgeonBot(
         )
     }
 
-    private fun prettyRssEntry(rssEntry: RssEntry) =
-        """
-            Заголовок: ${rssEntry.title}
-            Автор: ${rssEntry.author}
-            Категория: ${rssEntry.topic}
-            Раздел: ${rssEntry.subtopic}
-            Ссылка: ${rssEntry.url}
+    private fun ChatButton.asInlineKeyboardButton() =
+        InlineKeyboardButton(text).apply { callbackData = name }
+
+    private fun RssEntry.asPrettyString() = """
+            Заголовок: $title
+            Автор: $author
+            Категория: $topic
+            Раздел: $subtopic
+            Ссылка: $url
         """.trimIndent()
 }
