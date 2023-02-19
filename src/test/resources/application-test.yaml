@@ -21,6 +21,8 @@ spring:
       ddl-auto: update
 
 rss:
+  bot:
+    enabled: false
   scheduler:
     enabled: false
     cron: "0 * * * * *"  # per 1 minutes - for testing

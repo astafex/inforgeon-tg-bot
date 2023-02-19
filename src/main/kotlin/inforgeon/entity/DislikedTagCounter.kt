@@ -8,7 +8,7 @@ import javax.persistence.*
  */
 @Entity
 @Table(schema = "bot", name = "disliked")
-class DislikedTagCounter (
+class DislikedTagCounter(
 
     @Id
     @GeneratedValue
@@ -25,7 +25,7 @@ class DislikedTagCounter (
     var count: Int,
 
     @ManyToOne(cascade = [CascadeType.ALL], fetch = FetchType.EAGER)
-    @JoinColumn(name="settings_id")
+    @JoinColumn(name = "settings_id")
     var settings: UserSettings? = null
 ) {
     override fun equals(other: Any?): Boolean {
