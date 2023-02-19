@@ -3,7 +3,7 @@ package inforgeon.inforgeon.bot
 import inforgeon.bot.ChatButton
 import inforgeon.bot.ChatCommand
 import inforgeon.entity.RssEntry
-import inforgeon.inforgeon.constant.*
+import inforgeon.inforgeon.constant.RssTopicName
 import inforgeon.inforgeon.service.BotApiService
 import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
