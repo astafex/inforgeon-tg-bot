@@ -21,6 +21,8 @@ spring:
       ddl-auto: update
 
 rss:
+  bot:
+    enabled: false
   scheduler:
     enabled: false
     cron: "0 * * * * *"  # per 1 minutes - for testing
@@ -33,8 +35,9 @@ rss:
     NEWS: "https://habr.com/ru/rss/all/all/?fl=ru&limit=100"
   subtopics:
     JAVA:
-      CORE: [ runtime, reflection, исключен, рефлекси, jvm, jre, jdk, heap, gc, jmm, мусор, garbage, eden,
-              bytecode, сериализац, десериализац, classloader, generic, обобщен ]
+      CORE:
+        [ runtime, reflection, исключен, рефлекси, jvm, jre, jdk, heap, gc, jmm, мусор, garbage, eden,
+          bytecode, сериализац, десериализац, classloader, generic, обобщен ]
       OOP: [ наследовани, solid, полиморфизм, абстракц, абстрактн, интерфейс, класс, ооп, oop, инкапсуляц, объект,
              interface, abstract, class, object ]
       COLLECTIONS: [ list, map, set, queue, deque, arraylist, hashset, hashmap, treeset, sortedset, treemap, linkedlist,
@@ -62,16 +65,20 @@ rss:
       AI: [ chatgpt, openai, dalle, нейросет, machine learning, data science, ml, нейрон, nlp, gan, обучен,
             python, робот, распознаван, pytorch, jupiter ]
       BACKEND: [ back, backend, бэкенд, java, go, golang, spring, php, laravel, symphony, сервер, kotlin, c++, c#,
-                 микросервис, архитектур, kafka, брокер, ddd, tdd, node.js, intellij, jdk ]
+                 микросервис, архитектур, kafka, брокер, ddd, tdd, node.js, intellij, jdk, паскаль, delphi,
+                 дерев, рекурс, бинарн, np-полн, о(n), стек, очеред, алгоритм, дейкстр, кнут, указател, массив, цикл, ветвлен ]
       FRONTEND: [ js, frontend, ui, ux, веб, front, браузер, верстк, babel, html, css, javascript, jquery, vue, react,
-                  redux, mobx, emmet, vscode, angular, клиент ]
+                  redux, mobx, emmet, vscode, angular, клиент, typescript ]
       QA: [ qa, тестир, selenium, автотест, ручно, selenid, postman, devtools, тест, test, уязвимост, баг, багуля, bug ]
       DEVOPS: [ devops, девопс, psa, инфра, инфраструктур, jenkins, ansible, terraform, kuber, kubernetes, docker, nginx,
                 deployment, configmap, pod, openshift, bare metal, linux, сервер, vim, bash, облачн, pipeline, pipe, ci, cd ]
       MOBILE: [ ios, android, swift, kotlin, android sdk, мобильно, моби, flutter ]
-      HARDWARE: [ железо, hardware, процессор, память, материнск, плата, озу, ram, cpu, gpu, xeon, amd, nvidia, intel, arm ]
+      HARDWARE: [ железо, hardware, процессор, память, материнск, плата, озу, ram, cpu, gpu, xeon, amd, nvidia, intel, arm,
+                  микросхем, светодиод, транзистор, конденсатор, резистор, оптоволокон, оптоволокно, ВОЛС, завод, производств,
+                  интегральн, starlink, микроконтроллер, usb, uart, diy ]
       RELOCATION: [ релокейт, переезд, переезж, перелет, relocation, relocate, valley, США, Европа, Канада, Австралия,
-                    Сербия, Армения, Грузия, Казахстан, Монголия, мобилизац, аккредитован, аккредитаци ]
-      HR: [ карьер, hr, кадров, собес, онбординг, ваканс, зарплат, доход, собеседов, рекрут, hh ]
+                    Сербия, Армения, Грузия, Казахстан, Монголия, мобилизац, аккредитован, аккредитаци, лингвист, английск,
+                    english, иностран, китайский язык, английский язык, Китай ]
+      HR: [ карьер, hr, кадров, кадр, кандидат, собес, онбординг, ваканс, зарплат, доход, собеседов, рекрут, hh, мотиваци ]
 
 
