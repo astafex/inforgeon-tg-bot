@@ -11,7 +11,5 @@ interface UserSettingsService {
 
     fun initializeUser(userSettings : UserSettings) : UserSettings
 
-    fun save(settings: UserSettings) : UserSettings
-
 //    fun resetAllDislikes(username : String, topicName: RssTopicName)
 }

@@ -18,9 +18,4 @@ class UserSettingsServiceImpl(private val repository: UserSettingsRepository) : 
     override fun initializeUser(userSettings: UserSettings): UserSettings {
         return repository.save(userSettings)
     }
-
-    @Transactional
-    override fun save(settings: UserSettings): UserSettings {
-        return repository.save(settings)
-    }
 }
