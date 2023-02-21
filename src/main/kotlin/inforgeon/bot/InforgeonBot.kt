@@ -59,11 +59,10 @@ class InforgeonBot(
                 when {
                     ChatCommand.START.command == this -> goMainMenu(message)
                     else -> goMainMenu(
-                        message,
-                        """
-                        Я такие слова еще не знаю.
-                        Может попробуете что-то из этого?
-                        """.trimMargin()
+                        message, """
+                            😵Даже не знаю как на это реагировать...
+                            Может попробуете что-то из этого?
+                            """.trimIndent()
                     )
                 }
             }
@@ -88,7 +87,7 @@ class InforgeonBot(
     }
 
     private fun goMainMenu(
-        message: Message, textMessage: String = """Основное меню""".trimMargin()
+        message: Message, textMessage: String = "Почитаем новости?"
     ) {
         execute(SendMessage().apply {
             chatId = message.chatId.toString()
@@ -109,7 +108,7 @@ class InforgeonBot(
     private fun goCategoryNewsLine(callbackQuery: CallbackQuery) {
         execute(SendMessage().apply {
             chatId = callbackQuery.message.chatId.toString()
-            text = "Выберете тему новостей:"
+            text = "Выбери тему"
             replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
                 keyboardMarkup.keyboard = listOf(
                     listOf(
@@ -137,11 +136,11 @@ class InforgeonBot(
         execute(SendMessage().apply {
             chatId = callbackQuery.message.chatId.toString()
             text = """
-                   Я Inforgeon, бот, который будет твоей карманной новостной лентой в мире IT.
-                   Чтобы я мог в будущем определять новости, которые тебе по душе, мне необходима твоя помощь.
-                   Всякий раз, если новость тебе не интересна - нажми 👎.
-                   При формировании новостной ленты, я буду учитывать твои пожелания.
-                   """.trimIndent()
+                Я Inforgeon, бот, который будет твоей карманной новостной лентой в мире IT.
+                Чтобы я мог в будущем определять новости, которые тебе по душе, мне необходима твоя помощь.
+                Всякий раз, если новость тебе не интересна - нажми 👎.
+                При формировании новостной ленты, я буду учитывать твои пожелания.
+                """.trimIndent()
             replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
                 keyboardMarkup.keyboard = listOf(
                     listOf(
@@ -203,9 +202,8 @@ class InforgeonBot(
         execute(SendMessage().apply {
             chatId = callbackQuery.message.chatId.toString()
             text = """
-                    К сожалению, новых новостей по теме ${rssTopic.name} нет.
-                    Вы можете выбрать другую тему или сбросить дизлайки
-                    """.trimIndent()
+                К сожалению, новых новостей по теме ${rssTopic.name} нет😧.
+                Вы можете выбрать другую тему или сбросить дизлайки""".trimIndent()
             replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
                 keyboardMarkup.keyboard = listOf(
                     listOf(
