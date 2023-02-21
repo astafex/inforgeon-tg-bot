@@ -59,9 +59,11 @@ class InforgeonBot(
                 when {
                     ChatCommand.START.command == this -> goMainMenu(message)
                     else -> goMainMenu(
-                        message, """
+                        message,
+                        """
                         Я такие слова еще не знаю.
-                        Может попробуете что-то из этого?""".trimMargin()
+                        Может попробуете что-то из этого?
+                        """.trimMargin()
                     )
                 }
             }
@@ -73,6 +75,7 @@ class InforgeonBot(
             when (callbackQuery.data) {
                 ChatButton.MAIN_MENU.name -> goMainMenu(callbackQuery.message)
                 ChatButton.RESET_DISLIKES.name -> goResetDislikes(callbackQuery)
+                ChatButton.INFORMATION.name -> goInformation(callbackQuery)
 
                 ChatButton.CATEGORY_NEWS_LINE.name -> goCategoryNewsLine(callbackQuery)
                 ChatButton.JAVA.name -> goNewestNews(callbackQuery, RssTopicName.JAVA)
@@ -84,7 +87,9 @@ class InforgeonBot(
         }
     }
 
-    private fun goMainMenu(message: Message, textMessage: String = "Основное меню") {
+    private fun goMainMenu(
+        message: Message, textMessage: String = """Основное меню""".trimMargin()
+    ) {
         execute(SendMessage().apply {
             chatId = message.chatId.toString()
             text = textMessage
@@ -93,7 +98,8 @@ class InforgeonBot(
                 keyboardMarkup.keyboard = listOf(
                     listOf(
                         ChatButton.CATEGORY_NEWS_LINE.asInlineKeyboardButton(),
-                        ChatButton.RESET_DISLIKES.asInlineKeyboardButton()
+                        ChatButton.RESET_DISLIKES.asInlineKeyboardButton(),
+                        ChatButton.INFORMATION.asInlineKeyboardButton()
                     )
                 )
             }
@@ -124,6 +130,26 @@ class InforgeonBot(
             service.resetAllDislikes(callbackQuery.from.id, rssTopic)
         }
         goMainMenu(callbackQuery.message, "Дизлайки успешно сброшены!")
+    }
+
+
+    private fun goInformation(callbackQuery: CallbackQuery) {
+        execute(SendMessage().apply {
+            chatId = callbackQuery.message.chatId.toString()
+            text = """
+                   Я Inforgeon, бот, который будет твоей карманной новостной лентой в мире IT.
+                   Чтобы я мог в будущем определять новости, которые тебе по душе, мне необходима твоя помощь.
+                   Всякий раз, если новость тебе не интересна - нажми 👎.
+                   При формировании новостной ленты, я буду учитывать твои пожелания.
+                   """.trimIndent()
+            replyMarkup = InlineKeyboardMarkup().also { keyboardMarkup ->
+                keyboardMarkup.keyboard = listOf(
+                    listOf(
+                        ChatButton.MAIN_MENU.asInlineKeyboardButton()
+                    )
+                )
+            }
+        })
     }
 
     private fun goNewestNews(callbackQuery: CallbackQuery, rssTopic: RssTopicName) {

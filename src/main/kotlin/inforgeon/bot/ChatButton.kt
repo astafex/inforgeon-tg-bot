@@ -9,7 +9,9 @@ enum class ChatButton(val text: String) {
     RESET_DISLIKES("Сброс дизлайков"),
     NEXT("Следующая новость"),
     DISLIKE("\uD83D\uDC4E"),
+
     MAIN_MENU("Главное меню"),
+    INFORMATION("Справка")
 }
 
 enum class ChatCommand(val command: String, val text: String) {
